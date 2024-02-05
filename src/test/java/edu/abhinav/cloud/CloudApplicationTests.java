@@ -16,9 +16,9 @@ class CloudApplicationTests {
 	@Test
 	void testUsers() {
 		User newUser = new User();
-		newUser.setUsername("AbhinavChoudhary");
-		newUser.setFirstname("Abhinav");
-		newUser.setLastname("Choudhary");
+		newUser.setUsername("Choudhary.ab@northeastern.edu");
+		newUser.setFirst_name("Abhinav");
+		newUser.setLast_name("Choudhary");
 		newUser.setPassword("password1234");
 
 		userService.addUsers(newUser);	

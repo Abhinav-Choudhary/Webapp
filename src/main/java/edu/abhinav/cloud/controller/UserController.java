@@ -3,11 +3,20 @@ package edu.abhinav.cloud.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import edu.abhinav.cloud.pojo.User;
 import edu.abhinav.cloud.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+
+import javax.swing.text.DateFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
@@ -34,7 +43,15 @@ public class UserController {
         if(!checkUserPassword) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
         }
-        return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).build();
+        User user = userService.getUserByUsername(userCreds[0]);
+        try {
+            ObjectMapper mapper = configureMapper();
+            String jsonString = mapper.writeValueAsString(user);
+            return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).body(jsonString);
+        }catch(JsonProcessingException e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+        }
     }
 
     public String[] authorizeUser(HttpHeaders headers) {
@@ -43,6 +60,15 @@ public class UserController {
         String credentialString = new String(decodeToken, StandardCharsets.UTF_8);
         String[] credentials = credentialString.split(":");
         return credentials;
+    }
+
+    public ObjectMapper configureMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        DateFormat format = DateFormat.getDateTimeInstance();
+        mapper.setDateFormat(format);
+        return mapper;
     }
     
 }
