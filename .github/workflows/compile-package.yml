@@ -8,6 +8,18 @@ jobs:
   build:
     name: Compile
     runs-on: ubuntu-latest
+
+    services:
+      # setup mysql service and perform health check
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: clouddb
+          MYSQL_USER: root
+          MYSQL_PASSWORD: admin
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -19,6 +31,9 @@ jobs:
       with:
         java-version: 17
         distribution: temurin
+      # Install MySQL
+    - name: Install MySQL
+      uses: sudo apt-get install -y mysql-client
       # Build Spring boot project and remove old artifacts
     - name: Build project
       run: mvn clean package
