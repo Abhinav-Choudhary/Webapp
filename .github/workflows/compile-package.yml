@@ -33,7 +33,7 @@ jobs:
         distribution: temurin
       # Install MySQL
     - name: Install MySQL
-      uses: sudo apt-get install -y mysql-client
+      run: sudo apt-get install -y mysql-client
       # Build Spring boot project and remove old artifacts
     - name: Build project
       run: mvn clean package
