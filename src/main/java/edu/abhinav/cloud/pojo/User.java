@@ -21,28 +21,32 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     @UuidGenerator
-    private String id;
+    private String id; //save id as UUID
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
+
     @Column(name = "first_name", nullable = false)
     private String first_name;
+
     @Column(name = "last_name", nullable = false)
     private String last_name;
+
     @Column(name = "password", nullable = false)
-    @JsonIgnore
+    @JsonIgnore //ignore password property from Jackson mapper
     private String password;
 
     @ReadOnlyProperty
     @Column(name = "account_created")
-    @CreationTimestamp
-    private Instant account_created;
+    @CreationTimestamp  //updates on creation
+    private Instant account_created;    //Instant is used as it stores data as date time
 
     @ReadOnlyProperty
     @Column(name="account_updated")
-    @UpdateTimestamp
-    private Instant account_updated;
+    @UpdateTimestamp    //updates on updation and creation
+    private Instant account_updated;    //Instant is used as it stores data as date time
 
+    //Getter and Setters
     public String getId() {
         return id;
     }

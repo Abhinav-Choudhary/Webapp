@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserValidations {
     
+    //validate user email
     public boolean validateEmail(String username) {
+        //email regex pattern
         String emailRegex = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
         Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);

@@ -18,19 +18,23 @@ public class UserService {
     @Autowired
     private SecurityConfig securityConfig;
 
+    //get all users
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
+    //search user by username and retrieve row
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    //save and update users, encode password
     public User addUsers(User newUser) {
         newUser.setPassword(securityConfig.encodePassword(newUser.getPassword()));
         return userRepository.save(newUser);
     }
 
+    //check user credentials and authenticate user
     public boolean authenticateUser(String username, String password) {
         User user = userRepository.findByUsername(username);
         if(user == null) return false; 
