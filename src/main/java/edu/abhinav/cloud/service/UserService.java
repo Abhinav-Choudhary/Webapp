@@ -26,9 +26,9 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public void addUsers(User newUser) {
+    public User addUsers(User newUser) {
         newUser.setPassword(securityConfig.encodePassword(newUser.getPassword()));
-        userRepository.save(newUser);
+        return userRepository.save(newUser);
     }
 
     public boolean authenticateUser(String username, String password) {
