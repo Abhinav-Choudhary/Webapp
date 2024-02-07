@@ -98,6 +98,11 @@ public class UserController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
                 }
 
+                //if user provides Id in request body, return bad request
+                if(queryUser.getId() != null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+                }
+
                 //check for username email validation
                 if(!userValidations.validateEmail(queryUser.getUsername())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
@@ -152,9 +157,12 @@ public class UserController {
             if(queryUser != null) {
 
                 //the request body should contain atleast one of the below parameters
-                if(queryUser.getPassword() == null || queryUser.getFirst_name() == null || 
-                    queryUser.getLast_name() == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+                if(queryUser.getPassword() == null) {
+                    if(queryUser.getFirst_name() == null) {
+                        if(queryUser.getLast_name() == null) {
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+                        }
+                    }
                 }
 
                 //if user submits username, id return bad request
@@ -164,9 +172,13 @@ public class UserController {
 
                 //retrieve user from database and update properties
                 User user = userService.getUserByUsername(userCreds[0]);
-                user.setFirst_name(queryUser.getFirst_name());
-                user.setLast_name(queryUser.getLast_name());
-                user.setPassword(queryUser.getPassword());
+                if(queryUser.getFirst_name() != null) user.setFirst_name(queryUser.getFirst_name());
+                if(queryUser.getLast_name() != null) user.setLast_name(queryUser.getLast_name());
+                if(queryUser.getPassword() != null) {
+                    user.setPassword(queryUser.getPassword());
+                } else {
+                    user.setPassword(userCreds[1]);
+                }
                 User updatedUser = userService.addUsers(user);
 
                 if(updatedUser != null) {
@@ -185,11 +197,13 @@ public class UserController {
     //get authorization credentials from header, decode base64 string, and return username, password seperately 
     public String[] getCreds(HttpHeaders headers) {
         @SuppressWarnings("null")
-        String authenticationToken = (headers != null && headers.getFirst("authorization") != null) ? headers.getFirst("authorization").split(" ")[1] : "";
+        String authenticationToken = (headers != null && 
+                                    headers.getFirst("authorization") != null) ? 
+                                    headers.getFirst("authorization").split(" ")[1] : "";
         
         byte[] decodeToken = Base64.getDecoder().decode(authenticationToken);
         String credentialString = new String(decodeToken, StandardCharsets.UTF_8);
-        String[] credentials = credentialString.split(":");
+        String[] credentials = !credentialString.isEmpty() ? credentialString.split(":") : new String[0];
         return credentials;
     }
 
