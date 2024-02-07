@@ -11,12 +11,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.abhinav.cloud.pojo.AddUser;
 import edu.abhinav.cloud.pojo.User;
 import edu.abhinav.cloud.service.UserService;
+import edu.abhinav.cloud.validations.UserValidations;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
@@ -29,10 +29,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-
-
 @RestController
 @RequestMapping("/v1")
 public class UserController {
@@ -40,13 +36,17 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    UserValidations userValidations;
+
     @GetMapping("/user/self")
     public ResponseEntity<Object> getUserDetails(@RequestParam(required = false) HashMap<String, String> param, @RequestHeader(required = false) HttpHeaders headers, @RequestBody(required = false) String userBody) {
         if(param.size() > 0 || userBody != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
-        String[] userCreds = authorizeUser(headers);
-        boolean checkUserPassword = userCreds.length > 1 && userService.authenticateUser(userCreds[0], userCreds[1]);
+        String[] userCreds = getCreds(headers);
+        if(userCreds.length < 2) return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+        boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
         if(!checkUserPassword) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
         }
@@ -66,12 +66,19 @@ public class UserController {
         if(param.size() > 0 || userBody == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
+        String[] userCreds = getCreds(headers);
+        if(userCreds.length > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+        }
         try {
             ObjectMapper mapper = configureMapper();
             AddUser queryUser = mapper.readValue(userBody, AddUser.class);
             if(queryUser != null) {
                 if(queryUser.getUsername() == null || queryUser.getPassword() == null || 
                 queryUser.getFirst_name() == null || queryUser.getLast_name() == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+                }
+                if(!userValidations.validateEmail(queryUser.getUsername())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
                 }
                 User searchedUser = userService.getUserByUsername(queryUser.getUsername());
@@ -99,8 +106,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
         try {
-            String[] userCreds = authorizeUser(headers);
-            boolean checkUserPassword = userCreds.length > 1 && userService.authenticateUser(userCreds[0], userCreds[1]);
+            String[] userCreds = getCreds(headers);
+            if(userCreds.length < 2) return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+            boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
             if(!checkUserPassword) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
             }
@@ -133,7 +141,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
     }
 
-    public String[] authorizeUser(HttpHeaders headers) {
+    public String[] getCreds(HttpHeaders headers) {
         String authenticationToken = (headers != null && headers.getFirst("authorization") != null) ? headers.getFirst("authorization").split(" ")[1] : "";
         byte[] decodeToken = Base64.getDecoder().decode(authenticationToken);
         String credentialString = new String(decodeToken, StandardCharsets.UTF_8);
