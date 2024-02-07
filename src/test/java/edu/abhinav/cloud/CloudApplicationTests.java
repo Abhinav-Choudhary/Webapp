@@ -13,6 +13,7 @@ class CloudApplicationTests {
 	@Autowired
     private UserService userService;
 
+	//Test to add user in the database
 	@Test
 	void testAddUsers() {
 		User newUser = new User();

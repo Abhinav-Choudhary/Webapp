@@ -1,12 +1,19 @@
 package edu.abhinav.cloud.pojo;
 
+//*This Pojo is only used to read json string provided in request payload*
+//*As Jackson mapper ignores password property, it ignores both read and write functions*
+//*Use this pojo so that Jackson mapper reads password from request body 
 public class AddUser {
+
+    //Properties
+    //These properties will not be stored in database or converted to Bean
     private String id;
     private String username;
     private String first_name;
     private String last_name;
     private String password;
     
+    //Getter and Setters
     public String getId() {
         return id;
     }
