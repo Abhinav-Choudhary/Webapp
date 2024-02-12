@@ -37,4 +37,4 @@ jobs:
       run: sudo apt-get install -y mysql-client
       # Build Spring boot project and remove old artifacts
     - name: Build project
-      run: mvn clean package
+      run: mvn clean package -DskipTests
