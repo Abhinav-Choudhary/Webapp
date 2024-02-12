@@ -43,6 +43,19 @@ jobs:
     name: Run Spring Boot
     needs: build
     runs-on: ubuntu-latest
+
+    services:
+        # setup mysql service and perform health check
+        mysql:
+          image: mysql:8.0
+          env:
+            MYSQL_DATABASE: clouddb
+            MYSQL_USER: abhinavc
+            MYSQL_PASSWORD: admin
+            MYSQL_ROOT_PASSWORD: root
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
    
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -62,6 +75,19 @@ jobs:
     name: Run Integration Tests
     needs: run-spring-boot
     runs-on: ubuntu-latest
+
+    services:
+        # setup mysql service and perform health check
+        mysql:
+          image: mysql:8.0
+          env:
+            MYSQL_DATABASE: clouddb
+            MYSQL_USER: abhinavc
+            MYSQL_PASSWORD: admin
+            MYSQL_ROOT_PASSWORD: root
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
