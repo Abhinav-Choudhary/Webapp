@@ -9,7 +9,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 import edu.abhinav.cloud.pojo.AddUser;
-// import edu.abhinav.cloud.pojo.User;
 
 @SpringBootTest
 public class IntegrationTests {
