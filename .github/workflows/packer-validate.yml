@@ -1,0 +1,27 @@
+name: Packer Validate
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Packer Validate
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout code
+      uses: actions/checkout@v3
+      # Build Spring boot project and remove old artifacts
+    - name: Setup Packer
+      uses: hashicorp/setup-packer@main
+      # Initialise Packer
+    - name: Packer init
+      run: packer init ./main.pkr.hcl
+      # Format packer files
+    - name: Packer format
+      run: packer fmt -check ./main.pkr.hcl
+      # Validate Packer Files
+    - name: Packer validate
+      run: packer validate ./main.pkr.hcl
