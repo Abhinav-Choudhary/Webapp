@@ -34,7 +34,9 @@ jobs:
         distribution: temurin
       # Install MySQL
     - name: Install MySQL
-      run: sudo apt-get install -y mysql-client
+      run: |
+        sudo apt-get install -y mysql-server
+        mysqladmin --user=root --password="" password "password"
       # Run Spring boot, sleep for 60s to let spring boot run, execute test
     - name: Run Spring Boot
       run: | 
