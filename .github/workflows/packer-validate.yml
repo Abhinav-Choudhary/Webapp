@@ -38,17 +38,7 @@ jobs:
           # Build Spring boot project and remove old artifacts
         - name: Build project
           run: mvn clean package -DskipTests
-  
-    packer-validate:
-        name: Packer Validate
-        needs: build-jar
-        runs-on: ubuntu-latest
-        
-        steps:
-        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-        - name: Checkout code
-          uses: actions/checkout@v3
-        # Setup Packer
+          # Setup Packer
         - name: Setup Packer
           uses: hashicorp/setup-packer@main
         # Initialise Packer
