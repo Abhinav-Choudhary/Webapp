@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 jobs:
-    build-jar:
-        name: Build Java Jar
+    packer-validate:
+        name: Packer Validate
         runs-on: ubuntu-latest
     
         services:
