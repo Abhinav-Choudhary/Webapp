@@ -18,7 +18,7 @@ public class IntegrationTests {
     void testCreateAccount() {
         String firstName = "Random fName";
         String lastName = "Random lName";
-        String username = "random@random.com";
+        String username = "random";
         String password = "random@123";
 
         AddUser newUser = new AddUser();
