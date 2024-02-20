@@ -8,19 +8,6 @@ jobs:
     packer-validate:
         name: Packer Validate
         runs-on: ubuntu-latest
-    
-        services:
-          # setup mysql service and perform health check
-          mysql:
-            image: mysql:8.0
-            env:
-              MYSQL_DATABASE: clouddb
-              MYSQL_USER: ${{secrets.MYSQL_USERNAME}}
-              MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-              MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
-            ports:
-              - 3306:3306
-            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
         
         steps:
           # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -32,9 +19,6 @@ jobs:
           with:
             java-version: 17
             distribution: temurin
-          # Install MySQL
-        - name: Install MySQL
-          run: sudo apt-get install -y mysql-client
           # Build Spring boot project and remove old artifacts
         - name: Build project
           run: mvn clean package -DskipTests
