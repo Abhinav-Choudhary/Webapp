@@ -1,0 +1,19 @@
+[Unit]
+Description=CSYE 6225 App
+ConditionPathExists=/opt/cloud-0.0.1-SNAPSHOT.jar
+After=network.target mysqld.service
+
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt
+ExecStart=java -jar cloud-0.0.1-SNAPSHOT.jar
+Restart=always
+RestartSec=3
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=csye6225
+
+[Install]
+WantedBy=multi-user.target
