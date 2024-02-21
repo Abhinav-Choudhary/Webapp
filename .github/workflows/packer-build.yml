@@ -21,9 +21,6 @@ jobs:
         # Check if Gcloud installed successfully
         - name: Use gcloud CLI
           run: gcloud info
-        # Initialise Gcloud
-        - name: Initialise Gcloud
-          run: gcloud init
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - name: Checkout code
           uses: actions/checkout@v3
