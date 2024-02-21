@@ -3,24 +3,13 @@ name: Packer Build
 on:
   pull_request:
     branches: [main]
-    types: [closed]
+    # types: [closed]
 jobs:
   packer:
     runs-on: ubuntu-latest
     name: Packer Build
 
     steps:
-        # Provide Gcloud service user creds
-        - id: auth
-          uses: google-github-actions/auth@v2
-          with:
-            credentials_json: ${{ secrets.GCLOUD_SERVICE_USER_JSON }}
-        # Setup Gcloud
-        - name: Set up Cloud SDK
-          uses: google-github-actions/setup-gcloud@v2
-        # Check if Gcloud installed successfully
-        - name: Use gcloud CLI
-          run: gcloud info
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - name: Checkout code
           uses: actions/checkout@v3
@@ -42,6 +31,17 @@ jobs:
         # Build Spring boot project and remove old artifacts
         - name: Build project
           run: mvn clean package -DskipTests
+        # Provide Gcloud service user creds
+        - id: auth
+          uses: google-github-actions/auth@v2
+          with:
+            credentials_json: ${{ secrets.GCLOUD_SERVICE_USER_JSON }}
+        # Setup Gcloud
+        - name: Set up Cloud SDK
+          uses: google-github-actions/setup-gcloud@v2
+        # Check if Gcloud installed successfully
+        - name: Use gcloud CLI
+          run: gcloud info
         # Setup Packer
         - name: Setup Packer
           uses: hashicorp/setup-packer@main
