@@ -24,6 +24,18 @@ The steps to run the application are as follows:
 - If you wish to run just the test cases:
   - run the command "mvn test"
 
+# Packer
+- This project builds a machine image using packer. The build is done by "packer-build" workflow which runs after successful merge to main. The workflow is build using IAM user credentials.
+- If you wish to run and test packer commands locally, below are the commands to perform various operations:
+  - Packer init <FILE_NAME>
+    - To scan the packer code and initialise packer
+  - Packer validate <FILE_NAME>
+    - To check for validation errors in packer code
+  - Packer fmt <FILE_NAME>
+    - To format packer files
+  - Packer build <FILE_NAME>
+    - To build the machine image
+
 # API Endpoints
 The following api end points are supported:
 (While running locally, use "http://localhost:8080" with below mentioned end points)
