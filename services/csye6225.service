@@ -1,18 +1,19 @@
 [Unit]
 Description=CSYE 6225 App
-ConditionPathExists=/opt/cloud-0.0.1-SNAPSHOT.jar
-After=network.target mysqld.service
+ConditionPathExists=/opt/db.properties
+After=network.target google-startup-scripts.service
 
 [Service]
 Type=simple
 User=csye6225
 Group=csye6225
 WorkingDirectory=/opt
-ExecStart=java -jar cloud-0.0.1-SNAPSHOT.jar
+ExecStart=java -jar cloud-0.0.1-SNAPSHOT.jar --spring.config.location=/opt/db.properties
 Restart=always
-RestartSec=3
-StandardOutput=syslog
-StandardError=syslog
+RestartSec=5s
+TimeoutSec=10s
+StandardOutput=append:/var/log/csye6225/app.log
+StandardError=append:/var/log/csye6225/app.log
 SyslogIdentifier=csye6225
 
 [Install]
