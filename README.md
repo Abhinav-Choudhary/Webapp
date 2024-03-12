@@ -9,6 +9,8 @@ The application is built using the following technologies, frameworks, languages
 - Hibernate ORM version 6.4.0
 - Maven
 - Postman (to build and use Api's)
+- Google Cloud Platform
+- Google Cloud SQL
 
 # How to run the application
 The steps to run the application are as follows:
