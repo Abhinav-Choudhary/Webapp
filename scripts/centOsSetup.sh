@@ -25,3 +25,9 @@ echo "------------Move services file complete----------------"
 echo "-------------------Install Java 17---------------------"
 sudo dnf -y install java-17-openjdk java-17-openjdk-devel
 echo "-------------------Installed Java 17---------------------"
+
+echo "-------------------Install Google Ops Agent---------------------"
+curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+sudo bash add-google-cloud-ops-agent-repo.sh --also-install \
+  --version=latest
+echo "-------------------Installed Google Ops Agent---------------------"

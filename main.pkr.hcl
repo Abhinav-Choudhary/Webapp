@@ -118,7 +118,8 @@ build {
       "./scripts/noLoginUser.sh",
       "./scripts/centOsSetup.sh",
       "./scripts/updateApplicationOwnership.sh",
-      "./scripts/enableServices.sh"
+      "./scripts/enableServices.sh",
+      "./scripts/logAgentSetup.sh"
     ]
   }
 }
