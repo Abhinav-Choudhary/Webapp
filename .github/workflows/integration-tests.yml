@@ -28,6 +28,12 @@ jobs:
       run: sudo touch /var/log/csye6225/errors.log
     - name: Create info.log
       run: sudo touch /var/log/csye6225/info.log
+    - name: Grant write access
+      run: |
+        if [ ! -w "/var/log/csye6225" ]; then
+          sudo chown $USER /var/log/csye6225
+        fi
+    
     - name: Check log files created
       run: ls -ld /var/log/csye6225
     - name: Run Spring Boot
