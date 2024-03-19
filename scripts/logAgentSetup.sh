@@ -6,9 +6,21 @@ logging:
     webapp-logger:
       type: files
       include_paths:
-      - /var/log/csye6225/app.log
+      - /var/log/csye6225/errors.log
+      - /var/log/csye6225/info.log
+  processors:
+    webapp-processor:
+      type: parse_json
+      time_key: instant.epochSecond
+      time_format: "%s"
+    move_severity:
+      type: modify_fields
+      fields:
+        severity:
+          move_from: jsonPayload.level
   service:
     pipelines:
-      default_pipeline:
-        receivers: [webapp-logger]
+      pipeline_webapp:
+        receivers: [ webapp-logger ]
+        processors: [webapp-processor, move_severity]
 EOF

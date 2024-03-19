@@ -1,5 +1,7 @@
 package edu.abhinav.cloud.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,9 @@ public class HealthCheckController {
 
     private final DataSource dataSource;
 
+    Logger logger = (Logger) LogManager.getLogger("WEBAPP_LOGGER");
+    Logger infoLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_INFO");
+
     public HealthCheckController(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -40,7 +45,9 @@ public class HealthCheckController {
             //check connection
             Connection connection = dataSource.getConnection();
             connection.close();
+            infoLogger.info("Connection Successful");
         } catch(Exception e) {
+            logger.error("HealthZ error: " + e);
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).cacheControl(CacheControl.noCache()).build();
         }
         return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).build();
@@ -49,24 +56,28 @@ public class HealthCheckController {
     //POST Mapping-------------------------------------------------------------------------------------------------------
     @PostMapping
     public ResponseEntity<Object> handlePost() {
+        logger.error("HealthZ error: Post method not allowed");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).cacheControl(CacheControl.noCache()).build();
     }
 
     //DELETE Mapping-----------------------------------------------------------------------------------------------------
     @DeleteMapping
     public ResponseEntity<Object> handleDelete() {
+        logger.error("HealthZ error: Delete method not allowed");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).cacheControl(CacheControl.noCache()).build();
     }
 
     //PUT Mapping--------------------------------------------------------------------------------------------------------
     @PutMapping
     public ResponseEntity<Object> handlePut() {
+        logger.error("HealthZ error: Put method not allowed");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).cacheControl(CacheControl.noCache()).build();
     }
 
     //PATCH Mapping------------------------------------------------------------------------------------------------------
     @PatchMapping
     public ResponseEntity<Object> handlePatch() {
+        logger.error("HealthZ error: Patch method not allowed");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).cacheControl(CacheControl.noCache()).build();
     }
 }

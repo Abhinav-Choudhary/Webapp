@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Configuration>
+<Appenders>
+    <File name="WebAppErrors" fileName="/var/log/csye6225/errors.log">
+        <JSONLayout compact="true" eventEol="true"/>
+        <BurstFilter level="ERROR" rate="2" maxBurst="10"/>
+    </File>
+    <Async name="AsyncAppender" bufferSize="80">
+        <AppenderRef ref="WebAppErrors"/>
+    </Async>
+    <!-- /var/log/csye6225/info.log -->
+    <!-- D:\Northeastern\Courses\cloud\info.log -->
+    <File name="WebAppInfo" fileName="/var/log/csye6225/info.log">
+        <JSONLayout compact="true" eventEol="true"/>
+        <BurstFilter level="INFO" rate="2" maxBurst="10"/>
+    </File>
+    <Async name="InfoAsyncAppender" bufferSize="80">
+        <AppenderRef ref="WebAppInfo"/>
+    </Async>
+</Appenders>
+
+<Loggers>
+    <Logger name="WEBAPP_LOGGER" level="ERROR"
+          additivity="false">
+        <AppenderRef ref="AsyncAppender" />
+    </Logger>
+    <Logger name="WEBAPP_LOGGER_INFO" level="INFO"
+          additivity="false">
+        <AppenderRef ref="InfoAsyncAppender" />
+    </Logger>
+</Loggers>
+</Configuration>
