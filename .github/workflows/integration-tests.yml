@@ -29,7 +29,9 @@ jobs:
     - name: Create info.log
       run: sudo touch /var/log/csye6225/info.log
     - name: Grant write access
-      run: sudo chmod ugo+wx /var/log/csye6225
+      run: |
+        sudo chmod +w /var/log/csye6225/errors.log
+        sudo chmod +w /var/log/csye6225/info.log
     - name: Check dir permissions
       run: ls -l /var/log/csye6225
     - name: Check error.log permissions
