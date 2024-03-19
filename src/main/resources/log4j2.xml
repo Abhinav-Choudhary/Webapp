@@ -8,8 +8,6 @@
     <Async name="AsyncAppender" bufferSize="80">
         <AppenderRef ref="WebAppErrors"/>
     </Async>
-    <!-- /var/log/csye6225/info.log -->
-    <!-- D:\Northeastern\Courses\cloud\info.log -->
     <File name="WebAppInfo" fileName="/var/log/csye6225/info.log">
         <JSONLayout compact="true" eventEol="true"/>
         <BurstFilter level="INFO" rate="2" maxBurst="10"/>
