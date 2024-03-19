@@ -23,7 +23,10 @@ jobs:
     - name: Setup MySQL
       run: sudo systemctl start mysql.service
     - name: Create Logging Directory
-      run: sudo mkdir --parents /var/log/csye6225
+      run: |
+        sudo mkdir --parents /var/log/csye6225
+        sudo touch /var/log/csye6225/errors.log
+        sudo touch /var/log/csye6225/info.log
     - name: Run Spring Boot
       run: | 
         mvn spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
