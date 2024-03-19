@@ -34,7 +34,7 @@ jobs:
       run: ls -ld /var/log/csye6225
     - name: Run Spring Boot
       run: | 
-        sudo mvn spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
+        sudo mvn -e spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
         sleep 60
-        sudo mvn test
+        sudo mvn -X test
         
