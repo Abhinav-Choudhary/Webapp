@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <Configuration>
 <Appenders>
-    <File name="WebAppErrors" fileName="/var/log/csye6225/errors.log">
+<!-- /var/log/csye6225/errors.log -->
+    <File name="WebAppErrors" fileName="D:\Northeastern\Courses\cloud\errors.log">
         <JSONLayout compact="true" eventEol="true"/>
         <BurstFilter level="ERROR" rate="2" maxBurst="10"/>
     </File>
     <Async name="AsyncAppender" bufferSize="80">
         <AppenderRef ref="WebAppErrors"/>
     </Async>
-    <File name="WebAppInfo" fileName="/var/log/csye6225/info.log">
+    <!-- /var/log/csye6225/info.log -->
+    <File name="WebAppInfo" fileName="D:\Northeastern\Courses\cloud\info.log">
         <JSONLayout compact="true" eventEol="true"/>
         <BurstFilter level="INFO" rate="2" maxBurst="10"/>
     </File>
