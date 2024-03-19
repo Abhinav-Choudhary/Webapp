@@ -29,7 +29,7 @@ jobs:
     # - name: Create info.log
     #   run: sudo touch /var/log/csye6225/info.log
     - name: Grant write access
-      run: sudo chmod ug+w /var/log/csye6225
+      run: sudo chmod 766 /var/log/csye6225
     - name: Check log files created
       run: ls -ld /var/log/csye6225
     - name: Run Spring Boot
