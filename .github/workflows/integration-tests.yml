@@ -29,7 +29,9 @@ jobs:
     - name: Create info.log
       run: sudo touch /var/log/csye6225/info.log
     - name: Grant write access
-      run: sudo chmod ugo+wx /var/log/csye6225
+      run: |
+        sudo chmod ugo+wx /var/log/csye6225/errors.log
+        sudo chmod ugo+wx /var/log/csye6225/info.log
     - name: Run Spring Boot
       run: | 
         mvn spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
