@@ -23,17 +23,13 @@ jobs:
     - name: Setup MySQL
       run: sudo systemctl start mysql.service
     - name: Create Logging Directory and log files
-      run: sudo mkdir --parents /var/log/csye6225 && sudo touch /var/log/csye6225/errors.log && sudo touch /var/log/csye6225/info.log
+      run: sudo mkdir --parents /var/log/csye6225 && sudo touch /var/log/csye6225/errors.log && sudo touch /var/log/csye6225/info.log && ls -ld /var/log/csye6225
     # - name: Create errors.log
     #   run: sudo touch /var/log/csye6225/errors.log
     # - name: Create info.log
     #   run: sudo touch /var/log/csye6225/info.log
     - name: Grant write access
-      run: |
-        if [ ! -w "/var/log/csye6225" ]; then
-          sudo chown $USER /var/log/csye6225
-        fi
-    
+      run: sudo chmod ug+w /var/log/csye6225
     - name: Check log files created
       run: ls -ld /var/log/csye6225
     - name: Run Spring Boot
