@@ -2,14 +2,18 @@
 <Configuration>
 <Appenders>
     <File name="WebAppErrors" fileName="/var/log/csye6225/errors.log">
-        <JSONLayout compact="true" eventEol="true"/>
+        <JSONLayout compact="true" eventEol="true">
+            <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
+        </JSONLayout>
         <BurstFilter level="ERROR" rate="2" maxBurst="10"/>
     </File>
     <Async name="AsyncAppender" bufferSize="80">
         <AppenderRef ref="WebAppErrors"/>
     </Async>
     <File name="WebAppInfo" fileName="/var/log/csye6225/info.log">
-        <JSONLayout compact="true" eventEol="true"/>
+        <JSONLayout compact="true" eventEol="true">
+            <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
+        </JSONLayout>
         <BurstFilter level="INFO" rate="2" maxBurst="10"/>
     </File>
     <Async name="InfoAsyncAppender" bufferSize="80">
