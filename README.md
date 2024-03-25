@@ -11,6 +11,7 @@ The application is built using the following technologies, frameworks, languages
 - Postman (to build and use Api's)
 - Google Cloud Platform
 - Google Cloud SQL
+- Log4j (for structured logs)
 
 # How to run the application
 The steps to run the application are as follows:
