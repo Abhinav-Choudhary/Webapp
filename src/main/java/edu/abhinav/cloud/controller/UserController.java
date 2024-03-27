@@ -10,7 +10,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import edu.abhinav.cloud.pojo.AddUser;
 import edu.abhinav.cloud.pojo.User;
+import edu.abhinav.cloud.pojo.VerifyUser;
+import edu.abhinav.cloud.service.GoogleService;
 import edu.abhinav.cloud.service.UserService;
+import edu.abhinav.cloud.service.VerifyUserService;
 import edu.abhinav.cloud.validations.UserValidations;
 
 import java.nio.charset.StandardCharsets;
@@ -42,8 +45,16 @@ public class UserController {
     @Autowired
     UserValidations userValidations;
 
+    @Autowired
+    VerifyUserService verifyUserService;
+
+    @Autowired
+    GoogleService googleService;
+
     Logger logger = (Logger) LogManager.getLogger("WEBAPP_LOGGER");
     Logger infoLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_INFO");
+    Logger warnLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_WARN");
+    Logger debugLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_DEBUG");
 
     //GET Mapping------------------------------------------------------------------------------------------------------
     @GetMapping("/user/self")
@@ -69,18 +80,26 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
         }
 
+        //check if user is verified
+        VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
+        if(verifyUser.isVerified() != true) {
+            logger.error("User Get Error: User not verified");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+        }
+
         //retrieve user from db
         User user = userService.getUserByUsername(userCreds[0]);
+        debugLogger.debug("User Get Debug: User retrieved from database: " + user.getUsername());
 
         //use Jackson mapper to convert pojo class to json string
         try {
             ObjectMapper mapper = configureMapper();
             String jsonString = mapper.writeValueAsString(user);
+            debugLogger.debug("User Get Debug: Json String from request body: " + jsonString);
             infoLogger.info("User Get: User Found: " + user.getUsername());
             return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).contentType(MediaType.APPLICATION_JSON).body(jsonString);
         } catch(JsonProcessingException e) {
             logger.error("User Get error: " + e);
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
     }
@@ -131,14 +150,28 @@ public class UserController {
 
                 //if user is present, return bad request else create user
                 if(searchedUser == null) {
+                    debugLogger.debug("User Post Debug: searchedUser is null");
                     User newUser = new User();
                     //translate AddUser pojo to User pojo, save user and return details as json string
                     translateAddUserToUser(queryUser, newUser);
                     User savedUser = userService.addUsers(newUser);
                     String jsonString = mapper.writeValueAsString(savedUser);
+                    debugLogger.debug("User Post Debug: savedUser Json String: " + jsonString);
                     infoLogger.info("User Post: User Successfully Created: " + savedUser.getUsername());
+                    try {
+                        // Add entry in verify_user table
+                        VerifyUser verifyUser = new VerifyUser(savedUser.getUsername());
+                        verifyUserService.addUser(verifyUser);
+                        infoLogger.info("User Post: Added user to Verify User Table");
+                        // Create PubSub message
+                        googleService.publishPubSubMessage(savedUser.getUsername());
+                        infoLogger.info("User Post: PubSub message created");
+                    } catch(Exception e) {
+                        logger.error("User Post Error: " + e);
+                    }
                     return ResponseEntity.status(HttpStatus.CREATED).cacheControl(CacheControl.noCache()).contentType(MediaType.APPLICATION_JSON).body(jsonString);
                 } else {
+                    debugLogger.debug("User Post Debug: searchedUser: " + searchedUser.getUsername());
                     logger.error("User Post error: User Already Exists");
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
                 }
@@ -178,6 +211,13 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
             }
 
+            //check if user is verified
+            VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
+            if(verifyUser.isVerified() != true) {
+                logger.error("User Put Error: User not verified");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+            }
+
             //configure Jackson mapper and read request body json string
             ObjectMapper mapper = configureMapper();
             AddUser queryUser = mapper.readValue(userBody, AddUser.class);
@@ -185,7 +225,9 @@ public class UserController {
 
                 //the request body should contain atleast one of the below parameters
                 if(queryUser.getPassword() == null) {
+                    warnLogger.warn("User Put Warning: Password is not present in body");
                     if(queryUser.getFirst_name() == null) {
+                        warnLogger.warn("User Put Warning: First Name is not present in body");
                         if(queryUser.getLast_name() == null) {
                             logger.error("User Put error: First Name, Last Name, Password fields are not present");
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
@@ -195,6 +237,8 @@ public class UserController {
 
                 //if user submits username, id return bad request
                 if(queryUser.getId() != null || queryUser.getUsername() != null) {
+                    debugLogger.debug("User Put Debug: queryUser.getId(): " + queryUser.getId());
+                    debugLogger.debug("User Put Debug: queryUser.getUsername(): " + queryUser.getUsername());
                     logger.error("User Put error: Id, Username should not be present in request body");
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
                 }
@@ -220,7 +264,6 @@ public class UserController {
             }
         } catch (JsonProcessingException e) {
             logger.error("User Put error: " + e);
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
