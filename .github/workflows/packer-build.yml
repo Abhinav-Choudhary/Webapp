@@ -31,11 +31,17 @@ jobs:
         # Create info.log file
         - name: Create info.log
           run: sudo touch /var/log/csye6225/info.log
+        - name: Create warn.log
+          run: sudo touch /var/log/csye6225/warn.log
+        - name: Create debug.log
+          run: sudo touch /var/log/csye6225/debug.log
         # Grant write access for log files
         - name: Grant write access
           run: |
             sudo chmod ugo+wx /var/log/csye6225/errors.log
             sudo chmod ugo+wx /var/log/csye6225/info.log
+            sudo chmod ugo+wx /var/log/csye6225/warn.log
+            sudo chmod ugo+wx /var/log/csye6225/debug.log
         # Start spring boot and run integration tests
         - name: Run integration tests
           run: | 
