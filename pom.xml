@@ -16,6 +16,18 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	<!-- Google Pub/Sub Dependencies Management-->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>libraries-bom</artifactId>
+			<version>26.34.0</version>
+			<type>pom</type>
+			<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,6 +87,11 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-spring-boot</artifactId>
+		</dependency>
+		<!-- Google Pub/Sub Dependencies-->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-pubsub</artifactId>
 		</dependency>
 	</dependencies>
 
