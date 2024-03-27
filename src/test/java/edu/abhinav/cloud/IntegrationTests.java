@@ -1,6 +1,7 @@
 package edu.abhinav.cloud;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
@@ -9,9 +10,14 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 import edu.abhinav.cloud.pojo.AddUser;
+import edu.abhinav.cloud.pojo.VerifyUser;
+import edu.abhinav.cloud.service.VerifyUserService;
 
 @SpringBootTest
 public class IntegrationTests {
+
+    @Autowired
+    VerifyUserService verifyUserService;
 
     @Test
     //Test 1 - Create an account, and using the GET call, validate account exists.
@@ -35,6 +41,11 @@ public class IntegrationTests {
        .post("/v1/user")
        .then()
        .statusCode(HttpStatus.CREATED.value());
+
+        //Set verified to true
+        VerifyUser vUser = verifyUserService.getByName(username);
+        vUser.setVerified(true);
+        verifyUserService.addUser(vUser);
 
         given()
         .port(8080)
