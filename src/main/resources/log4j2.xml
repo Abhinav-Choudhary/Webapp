@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <Configuration>
 <Appenders>
+    <!-- Errors Log -->
     <File name="WebAppErrors" fileName="/var/log/csye6225/errors.log">
         <JSONLayout compact="true" eventEol="true">
             <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
@@ -10,6 +11,7 @@
     <Async name="AsyncAppender" bufferSize="80">
         <AppenderRef ref="WebAppErrors"/>
     </Async>
+    <!-- Info Log -->
     <File name="WebAppInfo" fileName="/var/log/csye6225/info.log">
         <JSONLayout compact="true" eventEol="true">
             <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
@@ -19,16 +21,48 @@
     <Async name="InfoAsyncAppender" bufferSize="80">
         <AppenderRef ref="WebAppInfo"/>
     </Async>
+    <!-- Warn Log -->
+    <File name="WebAppWarn" fileName="/var/log/csye6225/warn.log">
+        <JSONLayout compact="true" eventEol="true">
+            <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
+        </JSONLayout>
+        <BurstFilter level="WARN" rate="2" maxBurst="10"/>
+    </File>
+    <Async name="WarnAsyncAppender" bufferSize="80">
+        <AppenderRef ref="WebAppWarn"/>
+    </Async>
+    <!-- Debug log -->
+    <File name="WebAppDebug" fileName="/var/log/csye6225/debug.log">
+        <JSONLayout compact="true" eventEol="true">
+            <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSX}" />
+        </JSONLayout>
+        <BurstFilter level="DEBUG" rate="2" maxBurst="10"/>
+    </File>
+    <Async name="DebugAsyncAppender" bufferSize="80">
+        <AppenderRef ref="WebAppDebug"/>
+    </Async>
 </Appenders>
 
 <Loggers>
+    <!-- Error Logger -->
     <Logger name="WEBAPP_LOGGER" level="ERROR"
           additivity="false">
         <AppenderRef ref="AsyncAppender" />
     </Logger>
+    <!-- Info Logger -->
     <Logger name="WEBAPP_LOGGER_INFO" level="INFO"
           additivity="false">
         <AppenderRef ref="InfoAsyncAppender" />
+    </Logger>
+    <!-- Warn Logger -->
+    <Logger name="WEBAPP_LOGGER_WARN" level="WARN"
+          additivity="false">
+        <AppenderRef ref="WarnAsyncAppender" />
+    </Logger>
+    <!-- Debug Logger -->
+    <Logger name="WEBAPP_LOGGER_DEBUG" level="DEBUG"
+          additivity="false">
+        <AppenderRef ref="DebugAsyncAppender" />
     </Logger>
 </Loggers>
 </Configuration>

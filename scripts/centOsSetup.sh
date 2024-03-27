@@ -22,6 +22,12 @@ sudo chown csye6225:csye6225 /var/log/csye6225/errors.log
 
 sudo touch /var/log/csye6225/info.log
 sudo chown csye6225:csye6225 /var/log/csye6225/info.log
+
+sudo touch /var/log/csye6225/warn.log
+sudo chown csye6225:csye6225 /var/log/csye6225/warn.log
+
+sudo touch /var/log/csye6225/debug.log
+sudo chown csye6225:csye6225 /var/log/csye6225/debug.log
 echo "------------Logs ready--------------------------------"
 
 echo "------------Move services file-------------------------"

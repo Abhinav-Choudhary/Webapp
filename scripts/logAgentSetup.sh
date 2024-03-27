@@ -8,6 +8,8 @@ logging:
       include_paths:
       - /var/log/csye6225/errors.log
       - /var/log/csye6225/info.log
+      - /var/log/csye6225/warn.log
+      - /var/log/csye6225/debug.log
   processors:
     webapp-processor:
       type: parse_json
