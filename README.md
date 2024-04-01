@@ -40,8 +40,11 @@ The steps to run the application are as follows:
     - To build the machine image
 
 # API Endpoints
-The following api end points are supported:
+Note: The authenticated endpoints require verification. When a new user is created, the application sends an email to the user with the verification link, click on the link to verify user. Without verification endpoints like GET and PUT will not work. Verification link stays active for 2 minutes, past which there is no way to request to another verification link.
+
 (While running locally, use "http://localhost:8080" with below mentioned end points)
+
+The following api end points are supported:
 - GET: /v1/user/self
   - This is an authenticated endpoint and requires an username and password
   - Returns details of current user in response
