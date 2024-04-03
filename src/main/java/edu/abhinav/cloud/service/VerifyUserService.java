@@ -29,7 +29,7 @@ public class VerifyUserService {
         return fetchedUser;
     }
 
-    public void updateStatus(String username) {
+    public boolean updateStatus(String username) {
     
         VerifyUser user = getByName(username);
         // Get instant from database and current instant
@@ -45,8 +45,11 @@ public class VerifyUserService {
             user.setVerified(true);
             verifyUserRepository.save(user);
             infoLogger.info("Verify User Service Info : " + username + " has been verified successfully.");
+            return true;
         } else {
             logger.error("Verify User Service Error: Verification link timed out for user: " + username);
         }
+
+        return false;
     }
 }

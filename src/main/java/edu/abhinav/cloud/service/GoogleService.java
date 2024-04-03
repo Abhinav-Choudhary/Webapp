@@ -27,6 +27,7 @@ public class GoogleService {
     
     Logger infoLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_INFO");
     Logger debugLogger = (Logger) LogManager.getLogger("WEBAPP_LOGGER_DEBUG");
+    Logger logger = (Logger) LogManager.getLogger("WEBAPP_LOGGER");
 
     public void publishPubSubMessage(String username) throws IOException, ExecutionException, InterruptedException {
     TopicName topicName = TopicName.of(projectId, topicId);
@@ -53,9 +54,12 @@ public class GoogleService {
       PubsubMessage pubsubMessage = PubsubMessage.newBuilder()
                                                   .setData(data)
                                                   .build();
+      debugLogger.debug("Google PubSub Debug: pubsubMessage Ready: " + pubsubMessage);
       ApiFuture<String> messageIdFuture = publisher.publish(pubsubMessage);
       String messageId = messageIdFuture.get();
       infoLogger.info("Google PubSub Info: Created message with message Id: " + messageId);
+    } catch (Exception e) {
+      logger.error("Google PubSUB Error: " + e);
     } finally {
       if (publisher != null) {
         publisher.shutdown();

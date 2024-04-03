@@ -84,7 +84,7 @@ public class UserController {
         VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
         if(verifyUser.isVerified() != true) {
             logger.error("User Get Error: User not verified");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).cacheControl(CacheControl.noCache()).build();
         }
 
         //retrieve user from db
@@ -215,7 +215,7 @@ public class UserController {
             VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
             if(verifyUser.isVerified() != true) {
                 logger.error("User Put Error: User not verified");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).cacheControl(CacheControl.noCache()).build();
             }
 
             //configure Jackson mapper and read request body json string

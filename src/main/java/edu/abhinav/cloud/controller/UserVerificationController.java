@@ -37,8 +37,14 @@ public class UserVerificationController {
         //if username is present, authenticate
         if(username != null) {
             infoLogger.info("Verify User Info: Verifying user status");
-            verifyUserService.updateStatus(username);
-            return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).build();
+            boolean userVerified = verifyUserService.updateStatus(username);
+            if (userVerified) {
+                infoLogger.info("Verify User Info: User Verified");
+                return ResponseEntity.status(HttpStatus.OK).cacheControl(CacheControl.noCache()).body("User Verified Successfully !!");
+            } else {
+                infoLogger.info("Verify User Info: Link Expired");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).cacheControl(CacheControl.noCache()).body("Link Expired...");
+            }
         }
         else {
             logger.error("Verify User Error : Username is not present in query");
