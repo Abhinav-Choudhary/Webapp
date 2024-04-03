@@ -73,18 +73,18 @@ public class UserController {
             logger.error("User Get error: Enter both username and password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
         }
-        
-        boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
-        if(!checkUserPassword) {
-            logger.error("User Get error: Unauthorized Access");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
-        }
 
         //check if user is verified
         VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
         if(verifyUser.isVerified() != true) {
             logger.error("User Get Error: User not verified");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).cacheControl(CacheControl.noCache()).build();
+        }
+        
+        boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
+        if(!checkUserPassword) {
+            logger.error("User Get error: Unauthorized Access");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
         }
 
         //retrieve user from db
@@ -205,17 +205,17 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).cacheControl(CacheControl.noCache()).build();
             }
 
-            boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
-            if(!checkUserPassword) {
-                logger.error("User Put error: Unauthorized Access");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
-            }
-
             //check if user is verified
             VerifyUser verifyUser = verifyUserService.getByName(userCreds[0]);
             if(verifyUser.isVerified() != true) {
                 logger.error("User Put Error: User not verified");
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).cacheControl(CacheControl.noCache()).build();
+            }
+
+            boolean checkUserPassword = userService.authenticateUser(userCreds[0], userCreds[1]);
+            if(!checkUserPassword) {
+                logger.error("User Put error: Unauthorized Access");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).cacheControl(CacheControl.noCache()).build();
             }
 
             //configure Jackson mapper and read request body json string
