@@ -150,11 +150,10 @@ jobs:
           - name: Refresh instances
             run: |
                 gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
-                --region=${{ vars.REGION }} \
                 --version=template=csye6225-instance \
+                --region=${{ vars.REGION }} \
                 --max-surge=1 \
-                --max-unavailable=1 \
-                --quiet
+                --max-unavailable=1
       
           - name: Wait for MIG refresh to complete
             id: wait_for_refresh
