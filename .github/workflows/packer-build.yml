@@ -146,6 +146,7 @@ jobs:
             run:  |
                 gcloud compute instance-templates create ${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
                 --instance-template-region=${{ vars.REGION }} \
+                --region=${{vars.REGION}} \
                 --machine-type=e2-medium \
                 --network=${{ vars.NETWORK }} \
                 --subnet=${{ vars.SUB_NETWORK }} \
