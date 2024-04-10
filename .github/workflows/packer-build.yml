@@ -101,13 +101,13 @@ jobs:
           - name: Use gcloud CLI
             run: gcloud info
           # download image id from artifact
-          - name: Download artifact
-            uses: actions/download-artifact@v3
-            with:
-              name: image-id-artifact
-          # print image id
-          - name: Print Image Id
-            run: echo ${{ steps.download-artifact.outputs.image_id }}
+          # - name: Download artifact
+          #   uses: actions/download-artifact@v3
+          #   with:
+          #     name: image-id-artifact
+          # # print image id
+          # - name: Print Image Id
+          #   run: echo ${{ steps.download-artifact.outputs.image_id }}
           # Generate random name
           - name: Generate Random Name
             run: |
