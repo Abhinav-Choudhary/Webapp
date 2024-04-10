@@ -115,7 +115,7 @@ jobs:
                 --subnet=${{ vars.SUB_NETWORK }} \
                 --image=${{ env.IMAGE_ID }} \
                 --image-project=${{ vars.PROJECT_ID }} \
-                --tags=${{ vars.TAGS }}
+                --tags=${{ vars.TAGS }} \
                 --metadata=startup-script='#!/bin/bash
                                             if [ ! -f "/opt/db.properties" ]
                                             then
