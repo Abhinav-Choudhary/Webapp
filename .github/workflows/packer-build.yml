@@ -153,7 +153,25 @@ jobs:
                 --image-project=${{ vars.PROJECT_ID }} \
                 --image=${{ env.IMAGE_ID }} \
                 --tags=${{ vars.TAGS }} \
-                --metadata=startup-script='${{ vars.METADATA_SCRIPT }}' \
+                --metadata=startup-script='#!/bin/bash
+
+                if [ ! -f "/opt/db.properties" ] 
+                then
+                sudo touch /opt/db.properties
+                
+                sudo echo "spring.datasource.url=jdbc:mysql://${google_sql_database_instance.database_instance.first_ip_address}:3306/${google_sql_database.database.name}?createDatabaseIfNotExist=true" >> /opt/db.properties
+                sudo echo "spring.datasource.username=${google_sql_user.users.name}" >> /opt/db.properties
+                sudo echo "spring.datasource.password=${google_sql_user.users.password}" >> /opt/db.properties
+                sudo echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> /opt/db.properties
+                sudo echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/db.properties
+                sudo echo "spring.jpa.show-sql=true" >> /opt/db.properties
+                sudo echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect" >> /opt/db.properties
+                
+                sudo chown -R csye6225:csye6225 /opt/db.properties
+                else
+                sudo echo "db.properties already exists" >> /var/log/csye6225/app.log
+                fi
+                sudo touch /opt/pubsub-service-account-key.json' \
                 --service-account=${{ vars.LOGGING_SERVICE_ACCOUNT_EMAIL  }} \
                 --scopes='https://www.googleapis.com/auth/cloud-platform'
       
@@ -163,36 +181,23 @@ jobs:
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
                 --region=${{ vars.REGION }}
       
-          - name: Wait for MIG refresh to complete
-            id: wait_for_refresh
+          - name: Check Status
             run: |
-                # Poll the status of the MIG until it's completed refreshing
-                while true; do
-                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
-                  --project=${{ vars.PROJECT_ID }} \
-                  --region=${{ vars.REGION }} \
-                  --format="value(status)")
-          
-                if [[ $STATUS == "REFRESHING" ]]; then
-                  echo "MIG is still refreshing. Waiting..."
-                  sleep 10
-                else
-                  echo "MIG refresh completed."
-                  break
-                fi
-                done
-          
-          - name: Check MIG refresh status
-            run: |
-                # Check the final status of the MIG refresh
-                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
-                  --project=${{ vars.PROJECT_ID }} \
-                  --region=${{ vars.REGION }} \
-                  --format="value(status)")
-                echo $STATUS
-                if [[ $STATUS != "REFRESHED" ]]; then
-                  echo "MIG refresh failed."
-                  exit 1
-                else
-                  echo "MIG refresh successful."
-                fi
+              status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
+              echo "Status: $status"
+              if [[ $status == "Group is stable" ]]; then
+              echo "Refreshed successfully"
+              break
+              else
+                echo "Refresh Failed"
+                exit 1
+              fi
+              if [ "$status" == "UPDATING" ]; then
+                echo "IGM is still updating..."
+                exit 1
+              fi
+              if [ "$status" == "READY" ]; then
+                echo "IGM is ready!"
+                exit 0
+              fi
+              exit 1
