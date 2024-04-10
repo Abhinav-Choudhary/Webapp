@@ -151,7 +151,7 @@ jobs:
             run: |
                 gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
                 --version=template=csye6225-instance \
-                --region=${{ vars.REGION }} \
+                --zone=us-east1-b \
                 --max-surge=1 \
                 --max-unavailable=1
       
