@@ -77,3 +77,110 @@ jobs:
         # Build image with packer
         - name: Packer build
           run: packer build ./main.pkr.hcl
+  refresh-instance:
+    needs: packer
+    runs-on: ubuntu-latest
+    name:  Refresh Instance to Use Latest Machine Image
+    steps:
+          - name: Setup Gcloud CLI
+            uses: google-github-actions/auth@v2
+            with:
+              credentials_json: ${{ secrets.GCLOUD_SERVICE_USER_JSON }}
+              # Setup Gcloud
+          - name: Set up Cloud SDK
+            uses: google-github-actions/setup-gcloud@v2
+              # Check if Gcloud installed successfully
+          - name: Use gcloud CLI
+            run: gcloud info
+              # Steps to fetch the details of the latest image
+          - name: Fecth Details of Latest image
+            run: |
+                MI_ID=$(gcloud compute images  list \
+                --project=${{ vars.PROJECT_ID }} \
+                --filter="family=${{ vars.FAMILY_NAME }}" \
+                --sort-by="creationTimestamp DESC" \
+                --format="value(name)" \
+                --limit=1)
+                echo "MI_ID=${MI_ID}" >>  $GITHUB_ENV
+              # Printing all the environment variables
+          - name: Print ENV variables
+            run: |
+                echo "MI_ID: $MI_ID"
+              # Creating new image template using the latest version of MI
+          - name:  Create Image Template from Latest Image
+            run:  |
+                gcloud compute instance-templates create csye6225_template_git \
+                --region=${{ vars.REGION }} \
+                --machine-type=e2-medium \
+                --network=${{ vars.NETWORK }} \
+                --subnet=${{ vars.SUB_NETWORK }} \
+                --image=$MI_ID \
+                --image-project=${{ vars.PROJECT_ID }} \
+                --tags=[${{ vars.TAGS }}]
+                --metadata=startup-script='#!/bin/bash
+                                              if [ ! -f "/opt/db.properties" ]
+                                              then
+                                              sudo touch /opt/db.properties
+      
+                                              sudo echo "spring.datasource.url=jdbc:mysql://${{ vars.GCP_DB_INSTANCE_IP }}:3306/${{ vars.GCP_DB_NAME }}?createDatabaseIfNotExist=true" >> /opt/db.properties
+                                              sudo echo "spring.datasource.username=${{ vars.GCP_DB_USER }}" >> /opt/db.properties
+                                              sudo echo "spring.datasource.password=${{ secrets.GCP_DB_PASS }}" >> /opt/db.properties
+                                              sudo echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> /opt/db.properties
+                                              sudo echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/db.properties
+                                              sudo echo "spring.jpa.show-sql=true" >> /opt/db.properties
+                                              sudo echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect" >> /opt/db.properties
+      
+                                              sudo chown -R csye6225:csye6225 /opt/db.properties
+                                              else
+                                              sudo echo "db.properties already exists" >> /var/log/csye6225/app.log
+                                              fi
+                                              sudo touch /opt/pubsub-service-account-key.json
+                                              sudo echo '${base64decode(${{ secrets.GCP_PUBSUB_PRIVATE_KEY }})}' >> /opt/pubsub-service-account-key.json
+                                              EOF' \
+                --service-account=${{ vars.LOGGING_SERVICE_ACCOUNT_EMAIL  }} \
+                --scopes='https://www.googleapis.com/auth/cloud-platform'
+      
+          - name: Refresh instances
+            run: |
+                gcloud compute instance-groups managed rolling-action replace ${{ vars.MIG }} \
+                --project=${{ vars.PROJECT_ID }} \
+                --region=${{ vars.REGION }}\
+                --version-name=new-csye6225_template_git \
+                --max-surge=1 \
+                --max-unavailable=1 \
+                --min-ready=1 \
+                --quiet
+      
+          - name: Wait for MIG refresh to complete
+            id: wait_for_refresh
+            run: |
+                # Poll the status of the MIG until it's completed refreshing
+                while true; do
+                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
+                  --project=${{ vars.PROJECT_ID }} \
+                  --region=${{ vars.REGION}} \
+                  --format="value(status)")
+          
+                if [[ $STATUS == "REFRESHING" ]]; then
+                  echo "MIG is still refreshing. Waiting..."
+                  sleep 10
+                else
+                  echo "MIG refresh completed."
+                  break
+                fi
+                done
+          
+          - name: Check MIG refresh status
+            run: |
+                # Check the final status of the MIG refresh
+                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
+                  --project=${{ vars.PROJECT_ID }} \
+                  --region=${{ vars.REGION }} \
+                  --format="value(status)")
+          
+                if [[ $STATUS != "REFRESHED" ]]; then
+                  echo "MIG refresh failed."
+                  exit 1
+                else
+                  echo "MIG refresh successful."
+                fi
