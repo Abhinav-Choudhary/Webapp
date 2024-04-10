@@ -122,8 +122,8 @@ jobs:
                 --machine-type=e2-medium \
                 --network=${{ vars.NETWORK }} \
                 --subnet=${{ vars.SUB_NETWORK }} \
-                --image= csye6225-1712773435 \
                 --image-project=${{ vars.PROJECT_ID }} \
+                --image=csye6225-1712773435 \
                 --tags=${{ vars.TAGS }} \
                 --metadata=startup-script='#!/bin/bash
                                             if [ ! -f "/opt/db.properties" ]
