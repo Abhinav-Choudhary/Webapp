@@ -143,7 +143,7 @@ jobs:
                                             sudo echo "db.properties already exists" >> /var/log/csye6225/app.log
                                             fi
                                             sudo touch /opt/pubsub-service-account-key.json
-                                            sudo echo '${base64decode(${{ secrets.GCP_PUBSUB_PRIVATE_KEY }})}' >> /opt/pubsub-service-account-key.json' \
+                                            sudo echo '$\{base64decode(${{ secrets.GCP_PUBSUB_PRIVATE_KEY }})\}' >> /opt/pubsub-service-account-key.json' \
                 --service-account=${{ vars.LOGGING_SERVICE_ACCOUNT_EMAIL  }} \
                 --scopes='https://www.googleapis.com/auth/cloud-platform'
       
