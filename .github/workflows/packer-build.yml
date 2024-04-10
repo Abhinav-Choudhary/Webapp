@@ -179,7 +179,7 @@ jobs:
                   --project=${{ vars.PROJECT_ID }} \
                   --region=${{ vars.REGION }} \
                   --format="value(status)")
-          
+                echo $STATUS
                 if [[ $STATUS != "REFRESHED" ]]; then
                   echo "MIG refresh failed."
                   exit 1
