@@ -80,6 +80,7 @@ jobs:
             OUTPUT=$(packer build ./main.pkr.hcl)
             IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.: \(packer-[0-9]\)/\1/p')
             echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+            echo "IMAGE_ID=$IMAGE_ID"
   refresh-instance:
     needs: packer
     runs-on: ubuntu-latest
@@ -104,7 +105,7 @@ jobs:
           # Printing all the environment variables
           - name: Print ENV variables
             run: |
-                echo "Machine Image ID: ${{env.IMAGE_ID}}"
+                echo "Machine Image ID: ${{ env.IMAGE_ID }}"
           # Creating new image template using the latest version of MI
           - name:  Create Image Template from Latest Image
             run:  |
@@ -134,7 +135,7 @@ jobs:
                                             sudo echo "db.properties already exists" >> /var/log/csye6225/app.log
                                             fi
                                             sudo touch /opt/pubsub-service-account-key.json
-                                            sudo echo '${base64decode(${{ secrets.GCP_PUBSUB_PRIVATE_KEY }})}' >> /opt/pubsub-service-account-key.json' \
+                                            sudo echo '${{ secrets.GCP_PUBSUB_PRIVATE_KEY }}' >> /opt/pubsub-service-account-key.json' \
                 --service-account=${{ vars.LOGGING_SERVICE_ACCOUNT_EMAIL  }} \
                 --scopes='https://www.googleapis.com/auth/cloud-platform'
       
