@@ -149,7 +149,7 @@ jobs:
       
           - name: Refresh instances
             run: |
-                gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
+                gcloud compute instance-groups managed rolling-action start-update webapp-group-manager \
                 --version=template=csye6225-instance \
                 --zone=us-east1-b \
                 --max-surge=1 \
@@ -160,7 +160,7 @@ jobs:
             run: |
                 # Poll the status of the MIG until it's completed refreshing
                 while true; do
-                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
+                STATUS=$(gcloud compute instance-groups managed describe webapp-group-manager \
                   --project=${{ vars.PROJECT_ID }} \
                   --region=${{ vars.REGION}} \
                   --format="value(status)")
@@ -177,7 +177,7 @@ jobs:
           - name: Check MIG refresh status
             run: |
                 # Check the final status of the MIG refresh
-                STATUS=$(gcloud compute instance-groups managed describe ${{ vars.MIG }} \
+                STATUS=$(gcloud compute instance-groups managed describe webapp-group-manager \
                   --project=${{ vars.PROJECT_ID }} \
                   --region=${{ vars.REGION }} \
                   --format="value(status)")
