@@ -8,7 +8,6 @@ jobs:
   packer:
     runs-on: ubuntu-latest
     name: Packer Build
-
     steps:
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - name: Checkout code
@@ -74,13 +73,6 @@ jobs:
         # Validate Packer Files
         - name: Packer validate
           run: packer validate ./main.pkr.hcl
-        # Build image with packer and output latest image to env variables
-        - name: Packer build
-          run:  |
-            OUTPUT=$(packer build ./main.pkr.hcl)
-            IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.: \(packer-[0-9]\)/\1/p')
-            echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
-            echo "IMAGE_ID=$IMAGE_ID"
   refresh-instance:
     needs: packer
     runs-on: ubuntu-latest
@@ -96,6 +88,13 @@ jobs:
           # Check if Gcloud installed successfully
           - name: Use gcloud CLI
             run: gcloud info
+          # Build image with packer and output latest image to env variables
+          - name: Packer build
+            run:  |
+                  OUTPUT=$(packer build ./main.pkr.hcl)
+                  IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.: \(packer-[0-9]\)/\1/p')
+                  echo "IMAGE_ID=$IMAGE_ID"
+                  echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
           # Generate random name
           - name: Generate Random Name
             run: |
