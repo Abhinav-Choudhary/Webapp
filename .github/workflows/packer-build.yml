@@ -109,7 +109,7 @@ jobs:
               # Creating new image template using the latest version of MI
           - name:  Create Image Template from Latest Image
             run:  |
-                gcloud compute instance-templates create csye6225_template_git \
+                gcloud compute instance-templates create ${{ vars.INSTANCE_TEMPLATE_NAME }} \
                 --region=${{ vars.REGION }} \
                 --machine-type=e2-medium \
                 --network=${{ vars.NETWORK }} \
@@ -145,7 +145,7 @@ jobs:
                 gcloud compute instance-groups managed rolling-action replace ${{ vars.MIG }} \
                 --project=${{ vars.PROJECT_ID }} \
                 --region=${{ vars.REGION }}\
-                --version-name=new-csye6225_template_git \
+                --version-name=${{ vars.MIG_VERSION_NAME }} \
                 --max-surge=1 \
                 --max-unavailable=1 \
                 --min-ready=1 \
