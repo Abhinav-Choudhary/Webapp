@@ -151,9 +151,7 @@ jobs:
             run: |
                 gcloud compute instance-groups managed rolling-action start-update webapp-group-manager \
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/csye6225-instance \
-                --region=us-east1 \
-                --max-surge=1 \
-                --max-unavailable=1
+                --region=us-east1
       
           - name: Wait for MIG refresh to complete
             id: wait_for_refresh
