@@ -73,6 +73,18 @@ jobs:
         # Validate Packer Files
         - name: Packer validate
           run: packer validate ./main.pkr.hcl
+        # Build image with packer and output latest image to env variables
+        - name: Packer build
+          run:  |
+              OUTPUT=$(packer build ./main.pkr.hcl)
+              IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.: \(packer-[0-9]\)/\1/p')
+              echo "IMAGE_ID=$IMAGE_ID"
+              echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+        - name: Share Image Id
+          uses: actions/upload-artifact@v3
+          with:
+            name: image-id-artifact
+            path: ${{ env.IMAGE_ID }}
   refresh-instance:
     needs: packer
     runs-on: ubuntu-latest
@@ -88,32 +100,20 @@ jobs:
           # Check if Gcloud installed successfully
           - name: Use gcloud CLI
             run: gcloud info
-          # Build Spring boot project and remove old artifacts
-          - name: Build project
-            run: mvn clean package -DskipTests
-          # Setup Packer
-          - name: Setup Packer
-            uses: hashicorp/setup-packer@main
-          # Initialise Packer
-          - name: Packer init
-            run: packer init ./main.pkr.hcl
-          # Build image with packer and output latest image to env variables
-          - name: Packer build
-            run:  |
-                  OUTPUT=$(packer build ./main.pkr.hcl)
-                  IMAGE_ID=$(echo "$OUTPUT" | sed -n 's/.: \(packer-[0-9]\)/\1/p')
-                  echo "IMAGE_ID=$IMAGE_ID"
-                  echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+          # download image id from artifact
+          - name: Download artifact
+            uses: actions/download-artifact@v3
+            with:
+              name: image-id-artifact
+          # print image id
+          - name: Print Image Id
+            run: echo ${{ steps.download-artifact.outputs.image_id }}
           # Generate random name
           - name: Generate Random Name
             run: |
                 RANDOM_NAME=$(uuidgen | tr -d '-' | cut -c1-6)
                 echo "Generated random name: $RANDOM_NAME"
                 echo "RANDOM_NAME=$RANDOM_NAME" >> $GITHUB_ENV
-          # Printing all the environment variables
-          - name: Print ENV variables
-            run: |
-                echo "Machine Image ID: ${{ env.IMAGE_ID }}"
           # Creating new image template using the latest version of MI
           - name:  Create Image Template from Latest Image
             run:  |
@@ -122,7 +122,7 @@ jobs:
                 --machine-type=e2-medium \
                 --network=${{ vars.NETWORK }} \
                 --subnet=${{ vars.SUB_NETWORK }} \
-                --image=${{ env.IMAGE_ID }} \
+                --image=${{ steps.download-artifact.outputs.image_id }} \
                 --image-project=${{ vars.PROJECT_ID }} \
                 --tags=${{ vars.TAGS }} \
                 --metadata=startup-script='#!/bin/bash
