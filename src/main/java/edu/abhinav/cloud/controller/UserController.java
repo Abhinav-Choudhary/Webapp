@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v2")
 public class UserController {
 
     @Autowired
