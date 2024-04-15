@@ -38,7 +38,7 @@ public class IntegrationTests {
        .contentType(ContentType.JSON)
        .body(newUser)
        .when()
-       .post("/v1/user")
+       .post("/v2/user")
        .then()
        .statusCode(HttpStatus.CREATED.value());
 
@@ -51,7 +51,7 @@ public class IntegrationTests {
         .port(8080)
         .auth().preemptive().basic(username, password)
         .when()
-        .get("/v1/user/self")
+        .get("/v2/user/self")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body(
@@ -84,7 +84,7 @@ public class IntegrationTests {
         .contentType(ContentType.JSON)
         .body(updateUser)
         .when()
-        .put("/v1/user/self")
+        .put("/v2/user/self")
         .then()
         .statusCode(HttpStatus.NO_CONTENT.value());
 
@@ -92,7 +92,7 @@ public class IntegrationTests {
         .port(8080)
         .auth().preemptive().basic(authUserName, authPassword)
         .when()
-        .get("/v1/user/self")
+        .get("/v2/user/self")
         .then()
         .statusCode(HttpStatus.OK.value())
         .body(
