@@ -126,12 +126,12 @@ jobs:
           - name: Packer init
             run: packer init ./main.pkr.hcl
           # Packer build
-          - name: Packer Build
-            run: |
-                packer build ./main.pkr.hcl
-                image_id=$(gcloud compute images list --filter="family=csye6225-app-image" --format="value(NAME)" --sort-by=~creationTimestamp --limit=1)
-                echo "IMAGE_ID=$image_id" >> $GITHUB_ENV
-                echo "Image ID: $image_id"
+          # - name: Packer Build
+          #   run: |
+          #       packer build ./main.pkr.hcl
+          #       image_id=$(gcloud compute images list --filter="family=csye6225-app-image" --format="value(NAME)" --sort-by=~creationTimestamp --limit=1)
+          #       echo "IMAGE_ID=$image_id" >> $GITHUB_ENV
+          #       echo "Image ID: $image_id"
           # Generate random name
           - name: Generate Random Name
             run: |
@@ -152,12 +152,9 @@ jobs:
                 --network=${{ vars.NETWORK }} \
                 --subnet=${{ vars.SUB_NETWORK }} \
                 --image-project=${{ vars.PROJECT_ID }} \
-                --image=${{ env.IMAGE_ID }} \
+                --image=csye6225-1713280847 \
                 --tags=${{ vars.TAGS }} \
-                --boot-disk-kms-key = ${{ vars.VM_KEY }} \
-                --boot-disk-kms-keyring = ${{ vars.KMS_KEYRING }} \
-                --boot-disk-kms-location = ${{ vars.REGION }} \
-                --boot-disk-kms-project = ${{ vars.PROJECT_ID }} \
+                --no-address \
                 --metadata=startup-script='#!/bin/bash
                                             if [ ! -f "/opt/db.properties" ] 
                                             then
