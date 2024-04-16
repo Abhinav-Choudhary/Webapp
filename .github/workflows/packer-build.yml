@@ -189,7 +189,7 @@ jobs:
             run: |
               status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
               echo "$status"
-              if [[ "$status" == 'Group is stable' ]]; then
+              if [[ "$status" == *"Group is stable"* ]]; then
                 echo "Refreshed successfully"
               else
                 echo "Refresh Failed"
