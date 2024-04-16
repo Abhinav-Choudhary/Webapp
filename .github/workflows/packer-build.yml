@@ -188,9 +188,20 @@ jobs:
           - name: Check Status
             run: |
               status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
-              echo "$status"
-              if [[ "$status" == *"Group is stable"* ]]; then
-                echo "Refreshed successfully"
+              echo "Status: $status"
+              if [[ $status == *"Group is stable"* ]]; then
+              echo "Refreshed successfully"
+              break
               else
                 echo "Refresh Failed"
+                exit 1
               fi
+              if [ "$status" == "UPDATING" ]; then
+                echo "IGM is still updating..."
+                exit 1
+              fi
+              if [ "$status" == "READY" ]; then
+                echo "IGM is ready!"
+                exit 0
+              fi
+              exit 1
