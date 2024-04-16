@@ -87,8 +87,8 @@ jobs:
               java-version: 17
               distribution: temurin
           # Build Spring boot project and remove old artifacts
-          - name: Build project
-            run: mvn clean package -DskipTests
+          # - name: Build project
+          #   run: mvn clean package -DskipTests
                   # Create csye6225 directory
           - name: Create Logging Directory and log files
             run: sudo mkdir --parents /var/log/csye6225
@@ -180,7 +180,7 @@ jobs:
             run: |
                 gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
-                --region=${{ vars.REGION }}
+                --region=${{ vars.REGION }} \
                 --max-surge=1 \
                 --max-unavailable=1 \
                 --quiet
