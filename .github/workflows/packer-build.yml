@@ -182,7 +182,7 @@ jobs:
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
                 --region=${{ vars.REGION }} \
                 --max-surge=3 \
-                --max-unavailable=1 \
+                --max-unavailable=3 \
                 --quiet
       
           - name: Check Status
