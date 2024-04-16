@@ -159,9 +159,9 @@ jobs:
                                             then
                                             sudo touch /opt/db.properties
                                             
-                                            sudo echo "spring.datasource.url=jdbc:mysql://${google_sql_database_instance.database_instance.first_ip_address}:3306/${google_sql_database.database.name}?createDatabaseIfNotExist=true" >> /opt/db.properties
-                                            sudo echo "spring.datasource.username=${google_sql_user.users.name}" >> /opt/db.properties
-                                            sudo echo "spring.datasource.password=${google_sql_user.users.password}" >> /opt/db.properties
+                                            sudo echo "spring.datasource.url=jdbc:mysql://${{ vars.GCP_DB_INSTANCE_IP}}:3306/webapp?createDatabaseIfNotExist=true" >> /opt/db.properties
+                                            sudo echo "spring.datasource.username=webapp" >> /opt/db.properties
+                                            sudo echo "spring.datasource.password=${{vars.GCP_DB_PASSWORD}}" >> /opt/db.properties
                                             sudo echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> /opt/db.properties
                                             sudo echo "spring.jpa.hibernate.ddl-auto=update" >> /opt/db.properties
                                             sudo echo "spring.jpa.show-sql=true" >> /opt/db.properties
