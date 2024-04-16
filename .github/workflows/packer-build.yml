@@ -204,4 +204,3 @@ jobs:
                 echo "IGM is ready!"
                 exit 0
               fi
-              exit 1
