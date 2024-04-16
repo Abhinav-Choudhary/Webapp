@@ -181,15 +181,15 @@ jobs:
                 gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
                 --region=${{ vars.REGION }} \
-                --max-surge=3 \
-                --max-unavailable=3 \
+                --max-surge=1 \
+                --max-unavailable=1 \
                 --quiet
       
           - name: Check Status
             run: |
               status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
-              echo "Status: $status"
-              if [[ "$status" == "Group is stable" ]]; then
+              echo "$status"
+              if [[ "$status" == 'Group is stable' ]]; then
                 echo "Refreshed successfully"
               else
                 echo "Refresh Failed"
