@@ -89,7 +89,7 @@ jobs:
           # Build Spring boot project and remove old artifacts
           - name: Build project
             run: mvn clean package -DskipTests
-                  # Create csye6225 directory
+                  Create csye6225 directory
           - name: Create Logging Directory and log files
             run: sudo mkdir --parents /var/log/csye6225
       # Create errors.log file
@@ -122,7 +122,7 @@ jobs:
           # Setup Packer
           - name: Setup Packer
             uses: hashicorp/setup-packer@main
-          # Initialise Packer
+          # # Initialise Packer
           - name: Packer init
             run: packer init ./main.pkr.hcl
           # Packer build
@@ -154,6 +154,7 @@ jobs:
                 --image-project=${{ vars.PROJECT_ID }} \
                 --image=${{ env.IMAGE_ID }} \
                 --tags=${{ vars.TAGS }} \
+                --no-address \
                 --metadata=startup-script='#!/bin/bash
                                             if [ ! -f "/opt/db.properties" ] 
                                             then
@@ -179,25 +180,27 @@ jobs:
             run: |
                 gcloud compute instance-groups managed rolling-action start-update ${{ vars.MIG }} \
                 --version=template=projects/csye6225-abhinav-dev/regions/us-east1/instanceTemplates/${{ vars.INSTANCE_TEMPLATE_NAME }}-${{ env.RANDOM_NAME }} \
-                --region=${{ vars.REGION }}
+                --region=${{ vars.REGION }} \
+                --max-surge=3 \
+                --max-unavailable=3 \
+                --quiet
       
           - name: Check Status
             run: |
               status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
               echo "Status: $status"
-              if [[ $status == "Group is stable" ]]; then
+              if [[ $status == *"Group is stable"* ]]; then
               echo "Refreshed successfully"
               break
               else
                 echo "Refresh Failed"
                 exit 1
               fi
-              if [ "$status" == "UPDATING" ]; then
-                echo "IGM is still updating..."
+              if [ "$status" == *"UPDATING"* ]; then
+                echo "MIG is still updating..."
                 exit 1
               fi
-              if [ "$status" == "READY" ]; then
-                echo "IGM is ready!"
+              if [ "$status" == *"READY"* ]; then
+                echo "MIG is ready!"
                 exit 0
               fi
-              exit 1
