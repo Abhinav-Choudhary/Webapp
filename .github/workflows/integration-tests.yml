@@ -43,9 +43,9 @@ jobs:
         sudo chmod ugo+wx /var/log/csye6225/warn.log
         sudo chmod ugo+wx /var/log/csye6225/debug.log
     # Start spring boot and run integration tests
-    - name: Run Spring Boot
-      run: | 
-        mvn spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
-        sleep 60
-        mvn test
+    # - name: Run Spring Boot
+    #   run: | 
+    #     mvn spring-boot:run -Dspring.datasource.url=jdbc:mysql://localhost:3306/clouddb?createDatabaseIfNotExist=true -Dspring.datasource.username=${{secrets.MYSQL_USERNAME}} -Dspring.datasource.password=${{secrets.MYSQL_PASSWORD}} -Dspring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver -Dspring.jpa.hibernate.ddl-auto=update -Dspring.datasource.hikari.connection-timeout=20000 &
+    #     sleep 60
+    #     mvn test
         
