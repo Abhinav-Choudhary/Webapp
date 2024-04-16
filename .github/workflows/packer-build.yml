@@ -3,7 +3,7 @@ name: Packer Build
 on:
   pull_request:
     branches: [main]
-    types: [closed]
+    # types: [closed]
 jobs:
   packer:
     runs-on: ubuntu-latest
@@ -185,19 +185,3 @@ jobs:
             run: |
               status=$(gcloud compute instance-groups managed wait-until ${{ vars.MIG }} --region=${{ vars.REGION }} --stable)
               echo "Status: $status"
-              if [[ $status == "Group is stable" ]]; then
-              echo "Refreshed successfully"
-              break
-              else
-                echo "Refresh Failed"
-                exit 1
-              fi
-              if [ "$status" == "UPDATING" ]; then
-                echo "IGM is still updating..."
-                exit 1
-              fi
-              if [ "$status" == "READY" ]; then
-                echo "IGM is ready!"
-                exit 0
-              fi
-              exit 1
