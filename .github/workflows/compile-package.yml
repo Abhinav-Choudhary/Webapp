@@ -20,5 +20,5 @@ jobs:
         java-version: 17
         distribution: temurin
       # Build Spring boot project and remove old artifacts
-    - name: Build project
-      run: mvn clean package -DskipTests
+    # - name: Build project
+    #   run: mvn clean package -DskipTests
