@@ -154,7 +154,6 @@ jobs:
                 --image-project=${{ vars.PROJECT_ID }} \
                 --image=${{ env.IMAGE_ID }} \
                 --tags=${{ vars.TAGS }} \
-                --no-address \
                 --boot-disk-kms-key = ${{ vars.VM_KEY }} \
                 --boot-disk-kms-keyring = ${{ vars.KMS_KEYRING }} \
                 --boot-disk-kms-location = ${{ vars.REGION }} \
