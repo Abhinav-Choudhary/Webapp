@@ -1,6 +1,14 @@
 # WebApp Application
 This repository contains source code for the project 'webapp'. A cloud based backend web application developed for the course CSYE 6225 Network Structures and Cloud Computing offered by Northeastern University and taken in Spring 2024.
 
+# Linked Repositories
+Explore the 2 additional repositories that complement this project, housing code for the Infrastructure as Code (IaC) crafted in Terraform, and the Serverless Lambda function implemented in Python. 
+<br>
+[Infrastructure as Code](https://github.com/Abhinav-Choudhary/Terraform-GCP-Infrastructure)
+<br>
+[Serverless Lambda](https://github.com/Abhinav-Choudhary/Serverless)
+<br>
+
 # Languages and Technologies Used
 The application is built using the following technologies, frameworks, languages, SKD, applications and runtimes:
 - Java JDK version 17
