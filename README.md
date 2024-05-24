@@ -1,5 +1,6 @@
 # WebApp Application
 This repository contains source code for the project 'webapp'. A cloud based backend web application developed for the course CSYE 6225 Network Structures and Cloud Computing offered by Northeastern University and taken in Spring 2024.
+The API specification for the application's endpoints are hosted at [SwaggerHub](https://app.swaggerhub.com/apis-docs/Choudhary.Abhinav/Webapp_SpringBoot/1.0.0)
 
 # Linked Repositories
 Explore the 2 additional repositories that complement this project, housing code for the Infrastructure as Code (IaC) crafted in Terraform, and the Serverless Lambda function implemented in Python. 
